@@ -1,0 +1,5 @@
+[webservers]
+ mywebhost ansible_ssh_host=IP ADDRESS
+
+[dbservers]
+ mydbhost ansible_ssh_host=IP ADDRESS

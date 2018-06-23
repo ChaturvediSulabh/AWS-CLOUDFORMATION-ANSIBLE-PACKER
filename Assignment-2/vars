@@ -1,0 +1,7 @@
+# Variables to connect to AWS
+aws_region: ap-southeast-1        # AWS region where resources are allocated
+
+# Variables to create EC2 instances
+key_name: ****                    # Key used to first ssh into an instance
+aws_zone: ap-southeast-1a         # EBS/EC2 must be in the same zone.
+ami_id: ami-76144b0a              # Red Hat Enterprise Linux version 7.5 (HVM), EBS General Purpose (SSD) Volume Type

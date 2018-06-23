@@ -1,0 +1,31 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+
+  "builders":[{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "ap-southeast-1",
+    "source_ami": "ami-76144b0a",
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "My-RHEL-AMI-{{isotime | clean_ami_name}}"
+  }],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum install -y python-dev python-pip",
+        "sudo pip install ansible"
+      ]
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "./site.yml"
+    }
+  ]
+}
