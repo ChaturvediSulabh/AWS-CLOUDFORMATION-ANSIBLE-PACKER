@@ -8,32 +8,40 @@
    - php
    - php-mysql
    - mod_ssl
+  become: yes
 
 - name: Install web role specific dependencies
   yum: name={{ item }} state=installed
   with_items:
    - git
+  become: yes
 
 - name: Start firewalld
   service: name=firewalld state=started enabled=yes
+  become: yes
 
 - name: insert firewalld rule for httpd
   firewalld: port={{ httpd_port }}/tcp permanent=true state=enabled immediate=yes
+  become: yes
 
 - name: http service state
   service: name=httpd state=started enabled=yes
+  become: yes
 
-- name: Configure SELinux to allow httpd to connect to remote database
-  seboolean: name=httpd_can_network_connect_db state=true persistent=yes
+- name: Creates directory
+  file: path={{ item }} state=directory
+  with_items:
+    - /etc/ssl/crt
+    - /etc/ssl/private
+    - /etc/ssl/csr
+  become: yes
 
 - name: Create self-signed certificate, if configured.
-    command: >
-      openssl req -x509 -nodes -subj '/CN={{ vagrant_hostname }}' -days 365
-      -newkey rsa:4096 -sha256 -keyout {{ item.key }} -out {{ item.cert }}
-      creates={{ item.cert }}
-    with_items:
-      - key: "{{ httpd_SSLCertificateKeyFile }}"
-      - cert: "{{ httpd_SSLCertificateFile }}"
+  command: >
+    openssl req -x509 -nodes -subj '/CN=localhost' -days 365
+    -newkey rsa:4096 -sha256 -keyout /etc/ssl/private/localhost.key -out /etc/ssl/csr/localhost.csr
+    creates=/etc/ssl/crt/localhost.crt
+  become: yes
 
 - name: Install main configuration file
   template:
@@ -44,6 +52,7 @@
     setype: httpd_config_t
     mode: '0644'
   notify: restart httpd
+  become: yes
 
 - name: Install status configuration file
   template:
@@ -55,6 +64,7 @@
     mode: '0644'
   notify: restart httpd
   when: httpd_StatusEnable
+  become: yes
 
 - name: Install mod_ssl configuration file
   template:
@@ -65,3 +75,4 @@
     setype: httpd_config_t
     mode: '0644'
   notify: restart httpd
+  become: yes

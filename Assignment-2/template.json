@@ -1,5 +1,6 @@
 {
   "variables": {
+    "user": "sysadmin",
     "aws_access_key": "",
     "aws_secret_key": ""
   },
@@ -9,7 +10,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-southeast-1",
-    "source_ami": "ami-76144b0a",
+    "source_ami": "ami-a7f0c4db",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
     "ami_name": "My-RHEL-AMI-{{isotime | clean_ami_name}}"
@@ -19,8 +20,10 @@
     {
       "type": "shell",
       "inline": [
-        "sudo yum install -y python-dev python-pip",
-        "sudo pip install ansible"
+        "sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm",
+        "sudo yum install -y ansible",
+        "sudo yum install -y python-pip",
+        "sudo pip install PyOpenSSL --upgrade"
       ]
     },
     {
